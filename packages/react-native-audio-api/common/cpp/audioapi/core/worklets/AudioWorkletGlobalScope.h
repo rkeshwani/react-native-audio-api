@@ -19,6 +19,7 @@ class AudioWorkletGlobalScope {
 
   std::shared_ptr<AudioWorkletProcessor> createProcessor(
       const std::string &name,
+      facebook::jsi::Runtime &runtime,
       facebook::jsi::Object &&options);
 
  private:

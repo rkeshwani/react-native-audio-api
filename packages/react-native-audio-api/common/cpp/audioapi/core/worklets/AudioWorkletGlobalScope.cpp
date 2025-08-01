@@ -24,11 +24,23 @@ void AudioWorkletGlobalScope::registerProcessor(
   processorConstructors_[name] = std::move(processorCtor);
 }
 
+#include <audioapi/HostObjects/AudioWorkletProcessorHostObject.h>
+
 std::shared_ptr<AudioWorkletProcessor> AudioWorkletGlobalScope::createProcessor(
     const std::string &name,
+    facebook::jsi::Runtime &runtime,
     facebook::jsi::Object &&options) {
-  // TODO: Implement processor creation
-  return nullptr;
+  if (!processorConstructors_.count(name)) {
+    // TODO: Throw InvalidStateError
+    return nullptr;
+  }
+
+  auto &ctor = processorConstructors_.at(name);
+  auto processorHostObject = ctor.callAsConstructor(std::move(options))
+    .asObject(runtime)
+    .asHostObject<AudioWorkletProcessorHostObject>(runtime);
+
+  return processorHostObject->getProcessor();
 }
 
 } // namespace audioapi

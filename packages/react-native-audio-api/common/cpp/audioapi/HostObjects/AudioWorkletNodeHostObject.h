@@ -2,6 +2,8 @@
 
 #include <audioapi/HostObjects/AudioNodeHostObject.h>
 #include <audioapi/core/worklets/AudioWorkletNode.h>
+#include <audioapi/HostObjects/MessagePortHostObject.h>
+#include <audioapi/HostObjects/AudioParamMapHostObject.h>
 #include <memory>
 
 namespace audioapi {
@@ -13,19 +15,21 @@ class AudioWorkletNodeHostObject : public AudioNodeHostObject {
       const std::shared_ptr<AudioWorkletNode> &node)
       : AudioNodeHostObject(node) {
     addGetters(
-        JSI_EXPORT_PROPERTY_GETTER(AudioWorkletNodeHostObject, port)
-        // TODO: Add parameters getter
-    );
+        JSI_EXPORT_PROPERTY_GETTER(AudioWorkletNodeHostObject, port),
+        JSI_EXPORT_PROPERTY_GETTER(AudioWorkletNodeHostObject, parameters));
   }
 
   JSI_PROPERTY_GETTER(port) {
-    // TODO: return MessagePortHostObject
-    return jsi::Value::undefined();
+    auto port = std::static_pointer_cast<AudioWorkletNode>(node_)->getPort();
+    auto portHostObject = std::make_shared<MessagePortHostObject>(port);
+    return jsi::Object::createFromHostObject(runtime, portHostObject);
   }
 
-  // JSI_PROPERTY_GETTER(parameters) {
-  //   // TODO: return AudioParamMapHostObject
-  //   return jsi::Value::undefined();
-  // }
+  JSI_PROPERTY_GETTER(parameters) {
+    auto params = std::static_pointer_cast<AudioWorkletNode>(node_)->getParameters();
+    auto paramsHostObject =
+        std::make_shared<AudioParamMapHostObject>(std::move(params));
+    return jsi::Object::createFromHostObject(runtime, paramsHostObject);
+  }
 };
 } // namespace audioapi

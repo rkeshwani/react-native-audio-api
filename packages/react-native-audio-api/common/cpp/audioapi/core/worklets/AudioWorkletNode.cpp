@@ -1,7 +1,9 @@
 #include <audioapi/core/worklets/AudioWorkletNode.h>
 #include <audioapi/core/worklets/AudioWorkletProcessor.h>
 #include <audioapi/core/BaseAudioContext.h>
+#include <audioapi/core/worklets/AudioWorklet.h>
 #include <audioapi/utils/AudioBus.h>
+#include <audioapi/HostObjects/MessagePortHostObject.h>
 
 namespace audioapi {
 
@@ -11,7 +13,34 @@ AudioWorkletNode::AudioWorkletNode(
     const jsi::Object &options)
     : AudioNode(context) {
   auto worklet = context->getAudioWorklet();
-  processor_ = worklet->createProcessor(name, jsi::Object(options));
+
+  auto port1 = std::make_shared<MessagePort>();
+  auto port2 = std::make_shared<MessagePort>();
+  port1->setEntangledPort(port2);
+  port2->setEntangledPort(port1);
+
+  port_ = port1;
+
+  auto processorOptions = jsi::Object(worklet->getRuntime());
+  processorOptions.setProperty(
+      worklet->getRuntime(),
+      "port",
+      jsi::Object::createFromHostObject(
+          worklet->getRuntime(), std::make_shared<MessagePortHostObject>(port2)));
+
+  auto newOptions = jsi::Object(options);
+  newOptions.setProperty(worklet->getRuntime(), "processorOptions", std::move(processorOptions));
+
+  processor_ = worklet->createProcessor(name, worklet->getRuntime(), std::move(newOptions));
+}
+
+std::shared_ptr<MessagePort> AudioWorkletNode::getPort() const {
+  return port_;
+}
+
+std::unordered_map<std::string, std::shared_ptr<AudioParam>>
+AudioWorkletNode::getParameters() const {
+  return parameters_;
 }
 
 void AudioWorkletNode::processNode(

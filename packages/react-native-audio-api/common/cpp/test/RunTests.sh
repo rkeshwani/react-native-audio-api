@@ -9,7 +9,7 @@ cleanup() {
 
 trap cleanup EXIT
 # Step 1: Move to the script's directory
-cd packages/react-native-audio-api/common/cpp/test
+cd "$(dirname "$0")"
 # Step 2: Configure CMake project
 # mkdir build
 cmake -S . -B build

@@ -9,6 +9,7 @@ import AudioFile from './AudioFile';
 import AudioVisualizer from './AudioVisualizer';
 import OfflineRendering from './OfflineRendering';
 import Record from './Record/Record';
+import AudioWorkletExample from './AudioWorkletExample';
 
 type NavigationParamList = {
   Oscillator: undefined;
@@ -20,6 +21,7 @@ type NavigationParamList = {
   AudioVisualizer: undefined;
   OfflineRendering: undefined;
   Record: undefined;
+  AudioWorkletExample: undefined;
 };
 
 export type ExampleKey = keyof NavigationParamList;
@@ -86,5 +88,11 @@ export const Examples: Example[] = [
     title: 'Record',
     subtitle: 'Record audio',
     screen: Record,
+  },
+  {
+    key: 'AudioWorkletExample',
+    title: 'AudioWorklet',
+    subtitle: 'Custom audio processing',
+    screen: AudioWorkletExample,
   },
 ] as const;
