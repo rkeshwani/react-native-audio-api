@@ -15,6 +15,7 @@
 
 namespace audioapi {
 
+class AudioWorklet;
 class AudioBus;
 class GainNode;
 class AudioBuffer;
@@ -42,6 +43,7 @@ class BaseAudioContext {
   [[nodiscard]] double getCurrentTime() const;
   [[nodiscard]] std::size_t getCurrentSampleFrame() const;
   std::shared_ptr<AudioDestinationNode> getDestination();
+  std::shared_ptr<AudioWorklet> getAudioWorklet();
 
   std::shared_ptr<RecorderAdapterNode> createRecorderAdapter();
   std::shared_ptr<OscillatorNode> createOscillator();
@@ -80,6 +82,7 @@ class BaseAudioContext {
   float sampleRate_ {};
   ContextState state_ = ContextState::RUNNING;
   std::shared_ptr<AudioNodeManager> nodeManager_;
+  std::shared_ptr<AudioWorklet> audioWorklet_;
 
  private:
   std::shared_ptr<PeriodicWave> cachedSineWave_ = nullptr;

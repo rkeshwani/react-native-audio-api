@@ -14,6 +14,7 @@
 #include <audioapi/HostObjects/StereoPannerNodeHostObject.h>
 #include <audioapi/HostObjects/AnalyserNodeHostObject.h>
 #include <audioapi/HostObjects/RecorderAdapterNodeHostObject.h>
+#include <audioapi/HostObjects/AudioWorkletHostObject.h>
 
 #include <jsi/jsi.h>
 #include <memory>
@@ -37,7 +38,8 @@ class BaseAudioContextHostObject : public JsiHostObject {
         JSI_EXPORT_PROPERTY_GETTER(BaseAudioContextHostObject, destination),
         JSI_EXPORT_PROPERTY_GETTER(BaseAudioContextHostObject, state),
         JSI_EXPORT_PROPERTY_GETTER(BaseAudioContextHostObject, sampleRate),
-        JSI_EXPORT_PROPERTY_GETTER(BaseAudioContextHostObject, currentTime));
+        JSI_EXPORT_PROPERTY_GETTER(BaseAudioContextHostObject, currentTime),
+        JSI_EXPORT_PROPERTY_GETTER(BaseAudioContextHostObject, audioWorklet));
 
     addFunctions(
         JSI_EXPORT_FUNCTION(BaseAudioContextHostObject, createRecorderAdapter),
@@ -73,6 +75,13 @@ class BaseAudioContextHostObject : public JsiHostObject {
 
   JSI_PROPERTY_GETTER(currentTime) {
     return {context_->getCurrentTime()};
+  }
+
+  JSI_PROPERTY_GETTER(audioWorklet) {
+    auto worklet = context_->getAudioWorklet();
+    auto workletHostObject =
+        std::make_shared<AudioWorkletHostObject>(worklet);
+    return jsi::Object::createFromHostObject(runtime, workletHostObject);
   }
 
   JSI_HOST_FUNCTION(createRecorderAdapter) {

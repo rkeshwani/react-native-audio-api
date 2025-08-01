@@ -38,6 +38,11 @@ export interface IBaseAudioContext {
     b64: string,
     playbackRate: number
   ) => Promise<IAudioBuffer>;
+  readonly audioWorklet: IAudioWorklet;
+}
+
+export interface IAudioWorklet {
+  addModule: (moduleURL: string) => Promise<void>;
 }
 
 export interface IAudioContext extends IBaseAudioContext {
@@ -62,6 +67,15 @@ export interface IAudioNode {
 
   connect: (destination: IAudioNode | IAudioParam) => void;
   disconnect: (destination?: IAudioNode | IAudioParam) => void;
+}
+
+export interface IAudioWorkletNode extends IAudioNode {
+  readonly port: MessagePort;
+  // TODO: Add parameters
+}
+
+export interface IAudioWorkletProcessor {
+  readonly port: MessagePort;
 }
 
 export interface IGainNode extends IAudioNode {

@@ -11,6 +11,8 @@
 #include <audioapi/core/sources/RecorderAdapterNode.h>
 #include <audioapi/core/utils/AudioDecoder.h>
 #include <audioapi/core/utils/AudioNodeManager.h>
+#include <audioapi/core/worklets/AudioWorklet.h>
+#include <audioapi/core/worklets/AudioWorklet.h>
 #include <audioapi/events/AudioEventHandlerRegistry.h>
 #include <audioapi/utils/AudioArray.h>
 #include <audioapi/utils/AudioBus.h>
@@ -23,6 +25,7 @@ BaseAudioContext::BaseAudioContext(
         &audioEventHandlerRegistry) {
   nodeManager_ = std::make_shared<AudioNodeManager>();
   destination_ = std::make_shared<AudioDestinationNode>(this);
+  audioWorklet_ = std::make_shared<AudioWorklet>(this);
 
   audioEventHandlerRegistry_ = audioEventHandlerRegistry;
 }
@@ -55,6 +58,10 @@ double BaseAudioContext::getCurrentTime() const {
 
 std::shared_ptr<AudioDestinationNode> BaseAudioContext::getDestination() {
   return destination_;
+}
+
+std::shared_ptr<AudioWorklet> BaseAudioContext::getAudioWorklet() {
+  return audioWorklet_;
 }
 
 std::shared_ptr<RecorderAdapterNode> BaseAudioContext::createRecorderAdapter() {
