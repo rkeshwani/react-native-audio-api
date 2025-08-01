@@ -21,6 +21,10 @@ class AudioWorkletNode : public AudioNode {
       const std::shared_ptr<AudioBus> &processingBus,
       int framesToProcess) override;
 
+#ifdef TESTING
+  void setProcessor(std::shared_ptr<AudioWorkletProcessor> processor);
+#endif
+
  private:
   std::shared_ptr<AudioWorkletProcessor> processor_;
 };

@@ -12,15 +12,16 @@ class AudioWorkletNodeHostObject : public AudioNodeHostObject {
   explicit AudioWorkletNodeHostObject(
       const std::shared_ptr<AudioWorkletNode> &node)
       : AudioNodeHostObject(node) {
-    // TODO: Expose port and parameters
-    // addGetters(JSI_EXPORT_PROPERTY_GETTER(AudioWorkletNodeHostObject, port));
-    // addGetters(JSI_EXPORT_PROPERTY_GETTER(AudioWorkletNodeHostObject, parameters));
+    addGetters(
+        JSI_EXPORT_PROPERTY_GETTER(AudioWorkletNodeHostObject, port)
+        // TODO: Add parameters getter
+    );
   }
 
-  // JSI_PROPERTY_GETTER(port) {
-  //   // TODO: return MessagePortHostObject
-  //   return jsi::Value::undefined();
-  // }
+  JSI_PROPERTY_GETTER(port) {
+    // TODO: return MessagePortHostObject
+    return jsi::Value::undefined();
+  }
 
   // JSI_PROPERTY_GETTER(parameters) {
   //   // TODO: return AudioParamMapHostObject

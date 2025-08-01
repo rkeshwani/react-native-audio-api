@@ -4,7 +4,7 @@ project(rnaudioapi_test)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(ROOT ${CMAKE_SOURCE_DIR}/../../../../..)
-set(REACT_NATIVE_DIR "${ROOT}/node_modules/react-native")
+set(REACT_NATIVE_DIR "${ROOT}/apps/fabric-example/node_modules/react-native")
 set(JSI_DIR "${REACT_NATIVE_DIR}/ReactCommon/jsi")
 
 include(FetchContent)
@@ -20,16 +20,16 @@ enable_testing()
 
 file(GLOB_RECURSE RNAUDIOAPI_SRC
   CONFIGURE_DEPENDS
-  "${ROOT}/node_modules/react-native-audio-api/common/cpp/audioapi/*.cpp"
-  "${ROOT}/node_modules/react-native-audio-api/android/src/main/cpp/audioapi/android/core/AudioDecoder.cpp"
+  "${ROOT}/packages/react-native-audio-api/common/cpp/audioapi/*.cpp"
+  "${ROOT}/packages/react-native-audio-api/android/src/main/cpp/audioapi/android/core/AudioDecoder.cpp"
 )
 
-list(REMOVE_ITEM RNAUDIOAPI_SRC "${ROOT}/node_modules/react-native-audio-api/common/cpp/audioapi/core/AudioContext.cpp")
+list(REMOVE_ITEM RNAUDIOAPI_SRC "${ROOT}/packages/react-native-audio-api/common/cpp/audioapi/core/AudioContext.cpp")
 
 file(GLOB_RECURSE RNAUDIOAPI_LIBS
   CONFIGURE_DEPENDS
-  "${ROOT}/node_modules/react-native-audio-api/common/cpp/audioapi/libs/*.c"
-  "${ROOT}/node_modules/react-native-audio-api/common/cpp/audioapi/libs/*.h"
+  "${ROOT}/packages/react-native-audio-api/common/cpp/audioapi/libs/*.c"
+  "${ROOT}/packages/react-native-audio-api/common/cpp/audioapi/libs/*.h"
 )
 
 add_library(rnaudioapi STATIC ${RNAUDIOAPI_SRC})
@@ -50,6 +50,7 @@ add_executable(
   tests
   OscillatorTest.cpp
   GainTest.cpp
+  AudioWorkletTest.cpp
 )
 
 target_link_libraries(tests
