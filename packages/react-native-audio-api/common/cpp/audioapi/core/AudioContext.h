@@ -14,7 +14,11 @@ class IOSAudioPlayer;
 
 class AudioContext : public BaseAudioContext {
  public:
-  explicit AudioContext(float sampleRate, bool initSuspended, const std::shared_ptr<IAudioEventHandlerRegistry> &audioEventHandlerRegistry);
+  explicit AudioContext(
+    float sampleRate,
+    bool initSuspended,
+    const std::shared_ptr<react::CallInvoker> &callInvoker,
+    const std::shared_ptr<IAudioEventHandlerRegistry> &audioEventHandlerRegistry);
   ~AudioContext() override;
 
   void close();

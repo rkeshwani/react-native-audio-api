@@ -13,9 +13,10 @@ AudioWorkletNode::AudioWorkletNode(
     const jsi::Object &options)
     : AudioNode(context) {
   auto worklet = context->getAudioWorklet();
+  auto callInvoker = context->getCallInvoker();
 
-  auto port1 = std::make_shared<MessagePort>();
-  auto port2 = std::make_shared<MessagePort>();
+  auto port1 = std::make_shared<MessagePort>(callInvoker);
+  auto port2 = std::make_shared<MessagePort>(callInvoker);
   port1->setEntangledPort(port2);
   port2->setEntangledPort(port1);
 

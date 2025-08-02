@@ -1,6 +1,7 @@
 #pragma once
 
 #include <jsi/jsi.h>
+#include <ReactCommon/CallInvoker.h>
 #include <string>
 #include <vector>
 #include <queue>
@@ -11,7 +12,7 @@ namespace audioapi {
 
 class MessagePort {
  public:
-  MessagePort();
+  MessagePort(std::shared_ptr<react::CallInvoker> callInvoker);
 
   void postMessage(const facebook::jsi::Value &message);
   void close();
@@ -24,6 +25,7 @@ class MessagePort {
   std::shared_ptr<MessagePort> entangledPort_;
   std::queue<facebook::jsi::Value> messageQueue_;
   std::mutex queueMutex_;
+  std::shared_ptr<react::CallInvoker> callInvoker_;
 };
 
 } // namespace audioapi

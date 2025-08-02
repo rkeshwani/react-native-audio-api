@@ -13,9 +13,10 @@ namespace audioapi {
 AudioContext::AudioContext(
     float sampleRate,
     bool initSuspended,
+    const std::shared_ptr<react::CallInvoker> &callInvoker,
     const std::shared_ptr<IAudioEventHandlerRegistry>
         &audioEventHandlerRegistry)
-    : BaseAudioContext(audioEventHandlerRegistry) {
+    : BaseAudioContext(callInvoker, audioEventHandlerRegistry) {
 #ifdef ANDROID
   audioPlayer_ = std::make_shared<AudioPlayer>(
       this->renderAudio(), sampleRate, destination_->getChannelCount());

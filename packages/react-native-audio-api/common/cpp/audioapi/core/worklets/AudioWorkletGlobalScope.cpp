@@ -31,19 +31,23 @@ void AudioWorkletGlobalScope::registerProcessor(
     facebook::jsi::Function &processorCtor,
     facebook::jsi::Runtime &runtime) {
   if (name.empty()) {
+    // TODO: Throw NotSupportedError
     throw facebook::jsi::JSIException("Processor name cannot be empty");
   }
 
   if (processorConstructors_.count(name)) {
+    // TODO: Throw NotSupportedError
     throw facebook::jsi::JSIException("Processor with name " + name + " already registered");
   }
 
   if (!processorCtor.isFunction()) {
+    // TODO: Throw TypeError
     throw facebook::jsi::JSIException("processorCtor must be a function");
   }
 
   auto prototype = processorCtor.getProperty(runtime, "prototype");
   if (!prototype.isObject()) {
+    // TODO: Throw TypeError
     throw facebook::jsi::JSIException("processorCtor must have a prototype property that is an object");
   }
 

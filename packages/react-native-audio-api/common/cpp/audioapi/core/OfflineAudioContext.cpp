@@ -22,9 +22,10 @@ OfflineAudioContext::OfflineAudioContext(
     int numberOfChannels,
     size_t length,
     float sampleRate,
+    const std::shared_ptr<react::CallInvoker> &callInvoker,
     const std::shared_ptr<IAudioEventHandlerRegistry>
         &audioEventHandlerRegistry)
-    : BaseAudioContext(audioEventHandlerRegistry),
+    : BaseAudioContext(callInvoker, audioEventHandlerRegistry),
       length_(length),
       numberOfChannels_(numberOfChannels),
       currentSampleFrame_(0) {

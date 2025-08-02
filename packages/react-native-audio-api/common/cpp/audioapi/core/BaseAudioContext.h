@@ -3,6 +3,7 @@
 #include <audioapi/core/types/ContextState.h>
 #include <audioapi/core/types/OscillatorType.h>
 
+#include <ReactCommon/CallInvoker.h>
 
 #include <functional>
 #include <memory>
@@ -35,7 +36,9 @@ class RecorderAdapterNode;
 
 class BaseAudioContext {
  public:
-  explicit BaseAudioContext(const std::shared_ptr<IAudioEventHandlerRegistry> &audioEventHandlerRegistry);
+  explicit BaseAudioContext(
+    const std::shared_ptr<react::CallInvoker> &callInvoker,
+    const std::shared_ptr<IAudioEventHandlerRegistry> &audioEventHandlerRegistry);
   virtual ~BaseAudioContext() = default;
 
   std::string getState();
@@ -44,6 +47,7 @@ class BaseAudioContext {
   [[nodiscard]] std::size_t getCurrentSampleFrame() const;
   std::shared_ptr<AudioDestinationNode> getDestination();
   std::shared_ptr<AudioWorklet> getAudioWorklet();
+  std::shared_ptr<react::CallInvoker> getCallInvoker();
 
   std::shared_ptr<RecorderAdapterNode> createRecorderAdapter();
   std::shared_ptr<OscillatorNode> createOscillator();
@@ -83,6 +87,7 @@ class BaseAudioContext {
   ContextState state_ = ContextState::RUNNING;
   std::shared_ptr<AudioNodeManager> nodeManager_;
   std::shared_ptr<AudioWorklet> audioWorklet_;
+  std::shared_ptr<react::CallInvoker> callInvoker_;
 
  private:
   std::shared_ptr<PeriodicWave> cachedSineWave_ = nullptr;

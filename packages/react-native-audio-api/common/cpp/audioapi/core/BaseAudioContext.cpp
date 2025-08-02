@@ -12,7 +12,6 @@
 #include <audioapi/core/utils/AudioDecoder.h>
 #include <audioapi/core/utils/AudioNodeManager.h>
 #include <audioapi/core/worklets/AudioWorklet.h>
-#include <audioapi/core/worklets/AudioWorklet.h>
 #include <audioapi/events/AudioEventHandlerRegistry.h>
 #include <audioapi/utils/AudioArray.h>
 #include <audioapi/utils/AudioBus.h>
@@ -21,8 +20,10 @@
 namespace audioapi {
 
 BaseAudioContext::BaseAudioContext(
+    const std::shared_ptr<react::CallInvoker> &callInvoker,
     const std::shared_ptr<IAudioEventHandlerRegistry>
-        &audioEventHandlerRegistry) {
+        &audioEventHandlerRegistry)
+    : callInvoker_(callInvoker) {
   nodeManager_ = std::make_shared<AudioNodeManager>();
   destination_ = std::make_shared<AudioDestinationNode>(this);
   audioWorklet_ = std::make_shared<AudioWorklet>(this);
@@ -62,6 +63,10 @@ std::shared_ptr<AudioDestinationNode> BaseAudioContext::getDestination() {
 
 std::shared_ptr<AudioWorklet> BaseAudioContext::getAudioWorklet() {
   return audioWorklet_;
+}
+
+std::shared_ptr<react::CallInvoker> BaseAudioContext::getCallInvoker() {
+  return callInvoker_;
 }
 
 std::shared_ptr<RecorderAdapterNode> BaseAudioContext::createRecorderAdapter() {
