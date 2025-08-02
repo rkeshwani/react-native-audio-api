@@ -25,30 +25,27 @@ void AudioWorkletGlobalScope::registerProcessor(
 }
 
 #include <audioapi/HostObjects/AudioWorkletProcessorHostObject.h>
+#include <audioapi/errors/errors.h>
 
 void AudioWorkletGlobalScope::registerProcessor(
     const std::string &name,
     facebook::jsi::Function &processorCtor,
     facebook::jsi::Runtime &runtime) {
   if (name.empty()) {
-    // TODO: Throw NotSupportedError
-    throw facebook::jsi::JSIException("Processor name cannot be empty");
+    throw NotSupportedError("Processor name cannot be empty");
   }
 
   if (processorConstructors_.count(name)) {
-    // TODO: Throw NotSupportedError
-    throw facebook::jsi::JSIException("Processor with name " + name + " already registered");
+    throw NotSupportedError("Processor with name " + name + " already registered");
   }
 
   if (!processorCtor.isFunction()) {
-    // TODO: Throw TypeError
-    throw facebook::jsi::JSIException("processorCtor must be a function");
+    throw TypeError("processorCtor must be a function");
   }
 
   auto prototype = processorCtor.getProperty(runtime, "prototype");
   if (!prototype.isObject()) {
-    // TODO: Throw TypeError
-    throw facebook::jsi::JSIException("processorCtor must have a prototype property that is an object");
+    throw TypeError("processorCtor must have a prototype property that is an object");
   }
 
   processorConstructors_[name] = std::move(processorCtor);
@@ -59,7 +56,7 @@ std::shared_ptr<AudioWorkletProcessor> AudioWorkletGlobalScope::createProcessor(
     facebook::jsi::Runtime &runtime,
     facebook::jsi::Object &&options) {
   if (!processorConstructors_.count(name)) {
-    throw facebook::jsi::JSIException("Processor with name " + name + " not found");
+    throw InvalidStateError("Processor with name " + name + " not found");
   }
 
   auto &ctor = processorConstructors_.at(name);

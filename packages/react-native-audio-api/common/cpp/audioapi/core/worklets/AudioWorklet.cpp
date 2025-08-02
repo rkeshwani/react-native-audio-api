@@ -2,6 +2,7 @@
 #include <audioapi/core/worklets/AudioWorklet.h>
 #include <audioapi/core/worklets/AudioWorkletGlobalScope.h>
 #include <audioapi/core/BaseAudioContext.h>
+#include <audioapi/errors/errors.h>
 #include <hermes/hermes.h>
 #include <jsi/jsi.h>
 #include <fstream>
@@ -46,6 +47,12 @@ void AudioWorklet::addModule(
       runtime_->evaluateJavaScript(std::make_unique<jsi::StringBuffer>(script), "");
 
       onsuccess();
+    } catch (const NotSupportedError &e) {
+      onerror("NotSupportedError: " + std::string(e.what()));
+    } catch (const InvalidStateError &e) {
+      onerror("InvalidStateError: " + std::string(e.what()));
+    } catch (const TypeError &e) {
+      onerror("TypeError: " + std::string(e.what()));
     } catch (const std::exception &e) {
       onerror(e.what());
     }

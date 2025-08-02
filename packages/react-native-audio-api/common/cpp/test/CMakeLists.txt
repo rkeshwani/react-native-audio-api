@@ -37,7 +37,7 @@ add_library(rnaudioapi_libs STATIC ${RNAUDIOAPI_LIBS})
 
 target_include_directories(rnaudioapi PUBLIC
   ${ROOT}/packages/react-native-audio-api/common/cpp
-  ${JSI_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/mocks
   "${REACT_NATIVE_DIR}/ReactCommon"
   "${REACT_NATIVE_DIR}/ReactCommon/callinvoker"
 )
