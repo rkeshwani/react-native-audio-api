@@ -3,6 +3,7 @@
 #include <memory>
 #include <string>
 #include <jsi/jsi.h>
+#include <functional>
 
 namespace audioapi {
 
@@ -13,7 +14,10 @@ class AudioWorklet {
  public:
   explicit AudioWorklet(BaseAudioContext *context);
 
-  void addModule(const std::string &script);
+  void addModule(
+      const std::string &script,
+      std::function<void()> onsuccess,
+      std::function<void(const std::string &)> onerror);
 
   std::shared_ptr<AudioWorkletProcessor>
   createProcessor(const std::string &name, facebook::jsi::Object &&options);

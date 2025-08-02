@@ -18,7 +18,7 @@ class MessagePort {
 
   void setEntangledPort(std::shared_ptr<MessagePort> port);
 
-  // TODO: Add onmessage event handler
+  facebook::jsi::Function onmessage;
 
  private:
   std::shared_ptr<MessagePort> entangledPort_;

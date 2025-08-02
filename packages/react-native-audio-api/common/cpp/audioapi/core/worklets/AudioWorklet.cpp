@@ -16,30 +16,39 @@ AudioWorklet::AudioWorklet(BaseAudioContext *context) : context_(context) {
   globalScope_ = std::make_shared<AudioWorkletGlobalScope>();
 }
 
-void AudioWorklet::addModule(const std::string &script) {
-  std::thread([this, script]() {
-    // 1. Create a new JSI runtime
-    runtime_ = facebook::hermes::makeHermesRuntime();
+void AudioWorklet::addModule(
+    const std::string &script,
+    std::function<void()> onsuccess,
+    std::function<void(const std::string &)> onerror) {
+  std::thread([this, script, onsuccess, onerror]() {
+    try {
+      // 1. Create a new JSI runtime
+      runtime_ = facebook::hermes::makeHermesRuntime();
 
-    // 2. Inject registerProcessor into the new runtime
-    auto registerProcessor = jsi::Function::createFromHostFunction(
-        *runtime_,
-        jsi::PropNameID::forAscii(*runtime_, "registerProcessor"),
-        2,
-        [this](
-            jsi::Runtime &runtime,
-            const jsi::Value &thisValue,
-            const jsi::Value *args,
-            size_t count) -> jsi::Value {
-          auto name = args[0].asString(runtime).utf8(runtime);
-          auto processorCtor = args[1].asObject(runtime).asFunction(runtime);
-          globalScope_->registerProcessor(name, std::move(processorCtor));
-          return jsi::Value::undefined();
-        });
-    runtime_->global().setProperty(*runtime_, "registerProcessor", registerProcessor);
+      // 2. Inject registerProcessor into the new runtime
+      auto registerProcessor = jsi::Function::createFromHostFunction(
+          *runtime_,
+          jsi::PropNameID::forAscii(*runtime_, "registerProcessor"),
+          2,
+          [this](
+              jsi::Runtime &runtime,
+              const jsi::Value &thisValue,
+              const jsi::Value *args,
+              size_t count) -> jsi::Value {
+            auto name = args[0].asString(runtime).utf8(runtime);
+            auto processorCtor = args[1].asObject(runtime).asFunction(runtime);
+          globalScope_->registerProcessor(name, processorCtor, runtime);
+            return jsi::Value::undefined();
+          });
+      runtime_->global().setProperty(*runtime_, "registerProcessor", registerProcessor);
 
-    // 3. Execute the module code in the new runtime
-    runtime_->evaluateJavaScript(std::make_unique<jsi::StringBuffer>(script), "");
+      // 3. Execute the module code in the new runtime
+      runtime_->evaluateJavaScript(std::make_unique<jsi::StringBuffer>(script), "");
+
+      onsuccess();
+    } catch (const std::exception &e) {
+      onerror(e.what());
+    }
   }).detach();
 }
 

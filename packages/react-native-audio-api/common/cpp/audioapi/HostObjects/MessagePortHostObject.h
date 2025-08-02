@@ -14,6 +14,9 @@ class MessagePortHostObject : public JsiHostObject {
     addFunctions(
         JSI_EXPORT_FUNCTION(MessagePortHostObject, postMessage),
         JSI_EXPORT_FUNCTION(MessagePortHostObject, close));
+
+    addGetters(JSI_EXPORT_PROPERTY_GETTER(MessagePortHostObject, onmessage));
+    addSetters(JSI_EXPORT_PROPERTY_SETTER(MessagePortHostObject, onmessage));
   }
 
   JSI_HOST_FUNCTION(postMessage) {
@@ -24,6 +27,14 @@ class MessagePortHostObject : public JsiHostObject {
   JSI_HOST_FUNCTION(close) {
     port_->close();
     return jsi::Value::undefined();
+  }
+
+  JSI_PROPERTY_GETTER(onmessage) {
+    return jsi::Value(runtime, port_->onmessage);
+  }
+
+  JSI_PROPERTY_SETTER(onmessage) {
+    port_->onmessage = value.asObject(runtime).asFunction(runtime);
   }
 
  private:

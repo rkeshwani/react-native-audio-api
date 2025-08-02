@@ -80,7 +80,7 @@ class BaseAudioContextHostObject : public JsiHostObject {
   JSI_PROPERTY_GETTER(audioWorklet) {
     auto worklet = context_->getAudioWorklet();
     auto workletHostObject =
-        std::make_shared<AudioWorkletHostObject>(worklet);
+        std::make_shared<AudioWorkletHostObject>(worklet, promiseVendor_);
     return jsi::Object::createFromHostObject(runtime, workletHostObject);
   }
 
